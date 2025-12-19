@@ -1,15 +1,5 @@
 #!/bin/sh
 
-# Script Params(OLD)
-# $1 = OPNScriptURI
-# $2 = OpnVersion
-# $3 = WALinuxVersion
-# $4 = Primary/Secondary/TwoNics
-# $5 = Trusted Nic subnet prefix - used to get the gw
-# $6 = Windows-VM-Subnet subnet prefix - used to route/nat allow internet access from Windows Management VM
-# $7 = ELB VIP Address
-# $8 = Private IP Secondary Server
-
 # Script Params
 # $1 = OPNScriptURI
 # $2 = OpnVersion
@@ -87,20 +77,20 @@ sh ./opnsense-bootstrap.sh.in -y -r "$2"
 # fetch $1actions_waagent.conf
 # cp actions_waagent.conf /usr/local/opnsense/service/conf/actions.d
 
-# Add Azure waagent
-fetch https://github.com/Azure/WALinuxAgent/archive/refs/tags/v2.15.0.1.tar.gz
-tar -xvzf v2.15.0.1.tar.gz
-cd WALinuxAgent-2.15.0.1/
-python3 setup.py install --register-service --lnx-distro=freebsd --force
-cd ..
+# # Add Azure waagent
+# fetch https://github.com/Azure/WALinuxAgent/archive/refs/tags/v2.15.0.1.tar.gz
+# tar -xvzf v2.15.0.1.tar.gz
+# cd WALinuxAgent-2.15.0.1/
+# python3 setup.py install --register-service --lnx-distro=freebsd --force
+# cd ..
 
-# Fix waagent by replacing configuration settings
-ln -s /usr/local/bin/python3.11 /usr/local/bin/python
-##sed -i "" 's/command_interpreter="python"/command_interpreter="python3"/' /etc/rc.d/waagent
-##sed -i "" 's/#!\/usr\/bin\/env python/#!\/usr\/bin\/env python3/' /usr/local/sbin/waagent
-sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
-fetch $1actions_waagent.conf
-cp actions_waagent.conf /usr/local/opnsense/service/conf/actions.d
+# # Fix waagent by replacing configuration settings
+# ln -s /usr/local/bin/python3.11 /usr/local/bin/python
+# ##sed -i "" 's/command_interpreter="python"/command_interpreter="python3"/' /etc/rc.d/waagent
+# ##sed -i "" 's/#!\/usr\/bin\/env python/#!\/usr\/bin\/env python3/' /usr/local/sbin/waagent
+# sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
+# fetch $1actions_waagent.conf
+# cp actions_waagent.conf /usr/local/opnsense/service/conf/actions.d
 
 # Installing bash - This is a requirement for Azure custom Script extension to run
 pkg install -y bash
