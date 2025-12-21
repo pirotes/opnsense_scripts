@@ -4,21 +4,21 @@
 # $1 = OPNScriptURI
 # $2 = OpnVersion
 # $3 = WALinuxVersion
-# $4 = primary/secondary/single
+# $4 = active_active_primary/active_active_secondary/single
 # $5 = Trusted Nic subnet GW IP
 # $6 = ELB VIP Address
 # $7 = Private IP Secondary Server
 
 # Check if Primary or Secondary Server to setup Firewal Sync
 # Note: Firewall Sync should only be setup in the Primary Server
-if [ "$4" = "primary" ]; then
+if [ "$4" = "active_active_primary" ]; then
     fetch $1config-active-active-primary.xml
     sed -i "" "s/yyy.yyy.yyy.yyy/$5/" config-active-active-primary.xml
     sed -i "" "s/www.www.www.www/$6/" config-active-active-primary.xml
     sed -i "" "s/xxx.xxx.xxx.xxx/$7/" config-active-active-primary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" config-active-active-primary.xml
     cp config-active-active-primary.xml /usr/local/etc/config.xml
-elif [ "$4" = "secondary" ]; then
+elif [ "$4" = "active_active_secondary" ]; then
     fetch $1config-active-active-secondary.xml
     sed -i "" "s/yyy.yyy.yyy.yyy/$5/" config-active-active-secondary.xml
     sed -i "" "s/www.www.www.www/$6/" config-active-active-secondary.xml
