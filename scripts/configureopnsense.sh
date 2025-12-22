@@ -78,6 +78,11 @@ sh ./opnsense-bootstrap.sh.in -y -r "$2"
 # cp actions_waagent.conf /usr/local/opnsense/service/conf/actions.d
 ##
 
+## WAagent
+# https://forum.opnsense.org/index.php?topic=40291.msg197657#msg197657
+pkg install azure-agent
+echo 'waagent_enable="YES"' >> /etc/rc.conf
+
 # Installing bash - This is a requirement for Azure custom Script extension to run
 pkg install -y bash
 pkg install -y os-frr
