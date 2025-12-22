@@ -61,8 +61,8 @@ pkg install azure-agent
 # echo 'waagent_enable="YES"' >> /etc/rc.conf
 
 # Fix waagent by replacing configuration settings
-# pyver=$(python3 -V | awk '{print $2}' | cut -d. -f1,2)
-# ln -s /usr/local/bin/python${pyver} /usr/local/bin/python
+pyver=$(python3 -V | awk '{print $2}' | cut -d. -f1,2)
+ln -s /usr/local/bin/python${pyver} /usr/local/bin/python
 ##sed -i "" 's/command_interpreter="python"/command_interpreter="python3"/' /etc/rc.d/waagent
 ##sed -i "" 's/#!\/usr\/bin\/env python/#!\/usr\/bin\/env python3/' /usr/local/sbin/waagent
 sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
