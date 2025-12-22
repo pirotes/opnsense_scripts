@@ -57,7 +57,7 @@ sh ./opnsense-bootstrap.sh.in -y -r "$2"
 
 # WAagent
 # https://forum.opnsense.org/index.php?topic=40291.msg197657#msg197657
-pkg install azure-agent
+pkg install -y azure-agent
 # echo 'waagent_enable="YES"' >> /etc/rc.conf
 
 # Fix waagent by replacing configuration settings
