@@ -353,7 +353,7 @@
       <interface>lan</interface>
       <ipprotocol>inet</ipprotocol>
       <statetype>keep state</statetype>
-      <descr>Allow Azure Loadbalancer Probe - with replyto LAN_GW</descr>
+      <descr>Allow Azure Loadbalancer Probe - with reply to LAN_GW</descr>
       <direction>in</direction>
       <reply-to>LAN_GW</reply-to>
       <log>1</log>
