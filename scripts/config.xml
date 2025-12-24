@@ -237,6 +237,8 @@
     <backupcount>60</backupcount>
     <crypto_hardware>aesni</crypto_hardware>
     <language>en_US</language>
+    <dnsserver>168.63.129.16</dnsserver>
+    <dnsserver>168.126.63.1</dnsserver>
     <dnsserver>8.8.8.8</dnsserver>
     <dnsserver>8.8.4.4</dnsserver>
     <sudo_allow_wheel>1</sudo_allow_wheel>
