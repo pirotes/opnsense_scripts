@@ -208,9 +208,9 @@
     </user>
     <nextuid>2000</nextuid>
     <nextgid>2000</nextgid>
-    <timezone>America/Mexico_City</timezone>
+    <timezone>Asia/Seoul</timezone>
     <time-update-interval>300</time-update-interval>
-    <timeservers>0.nl.pool.ntp.org</timeservers>
+    <timeservers>3.kr.pool.ntp.org</timeservers>
     <webgui>
       <protocol>https</protocol>
       <ssl-certref>598102500f355</ssl-certref>
