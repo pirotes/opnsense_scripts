@@ -661,10 +661,7 @@
   <hasync>
     <pfsyncinterface>lan</pfsyncinterface>
     <pfsyncpeerip>xxx.xxx.xxx.xxx</pfsyncpeerip>
-    <synchronizetoip/>
-    <username/>
-    <password/>
-    <syncitems/>
+    <pfsyncenabled>on</pfsyncenabled>
   </hasync>
   <gateways>
     <gateway_item>
