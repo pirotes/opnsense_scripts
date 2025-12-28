@@ -6,7 +6,7 @@
 # $3 = active_active_primary/active_active_secondary/single
 # $4 = Trusted Nic subnet GW IP
 # $5 = ELB VIP Address
-# $6 = Private IP Secondary Server
+# $6 = Peer Server IP - Private IP Primary or Secondary Server
 
 # Check if Primary or Secondary Server to setup Firewal Sync
 # Note: Firewall Sync should only be setup in the Primary Server
@@ -21,6 +21,7 @@ elif [ "$3" = "active_active_secondary" ]; then
     fetch $1config-active-active-secondary.xml
     sed -i "" "s/yyy.yyy.yyy.yyy/$4/" config-active-active-secondary.xml
     sed -i "" "s/www.www.www.www/$5/" config-active-active-secondary.xml
+    sed -i "" "s/xxx.xxx.xxx.xxx/$6/" config-active-active-secondary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" config-active-active-secondary.xml
     cp config-active-active-secondary.xml /usr/local/etc/config.xml
 elif [ "$3" = "single" ]; then
