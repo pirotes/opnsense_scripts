@@ -658,6 +658,14 @@
       <mode>hybrid</mode>
     </outbound>
   </nat>
+  <hasync>
+    <pfsyncinterface>lan</pfsyncinterface>
+    <pfsyncpeerip>xxx.xxx.xxx.xxx</pfsyncpeerip>
+    <synchronizetoip/>
+    <username/>
+    <password/>
+    <syncitems/>
+  </hasync>
   <gateways>
     <gateway_item>
       <interface>lan</interface>
