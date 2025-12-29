@@ -6,8 +6,12 @@
 # $3 = active_active_primary/active_active_secondary/single
 # $4 = Trusted Nic subnet GW IP
 # $5 = Peer Server IP - Private IP Primary or Secondary Server
-# $6 = vxlan local ip
-# $7 = vxlan remote ip
+# $6 = vxlan local ip - vm trusted nic ip
+# $7 = vxlan remote ip - gwlb frontend ip
+# $8 = vxlan internal local port - 10801
+# $9 = vxlan external local port - 10800
+# $10 = vxlan internal identifier - 801 (800~1000)
+# $11 = vxlan external identifier - 800 (800~1000)
 
 # Check if Primary or Secondary Server to setup Firewal Sync
 # Note: Firewall Sync should only be setup in the Primary Server
@@ -17,6 +21,8 @@ if [ "$3" = "active_active_primary" ]; then
     sed -i "" "s/xxx.xxx.xxx.xxx/$5/" glb-config-active-active-primary.xml
     sed -i "" "s/lll.lll.lll.lll/$6/" glb-config-active-active-primary.xml
     sed -i "" "s/rrr.rrr.rrr.rrr/$7/" glb-config-active-active-primary.xml
+    sed -i "" "s/zzz/$10/" glb-config-active-active-primary.xml
+    sed -i "" "s/ccc/$11/" glb-config-active-active-primary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" glb-config-active-active-primary.xml
     cp glb-config-active-active-primary.xml /usr/local/etc/config.xml
 elif [ "$3" = "active_active_secondary" ]; then
@@ -25,6 +31,8 @@ elif [ "$3" = "active_active_secondary" ]; then
     sed -i "" "s/xxx.xxx.xxx.xxx/$5/" glb-config-active-active-secondary.xml
     sed -i "" "s/lll.lll.lll.lll/$6/" glb-config-active-active-secondary.xml
     sed -i "" "s/rrr.rrr.rrr.rrr/$7/" glb-config-active-active-secondary.xml
+    sed -i "" "s/zzz/$10/" glb-config-active-active-secondary.xml
+    sed -i "" "s/ccc/$11/" glb-config-active-active-secondary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" glb-config-active-active-secondary.xml
     cp glb-config-active-active-secondary.xml /usr/local/etc/config.xml
 elif [ "$3" = "single" ]; then
@@ -32,6 +40,8 @@ elif [ "$3" = "single" ]; then
     sed -i "" "s/yyy.yyy.yyy.yyy/$4/" config.xml
     sed -i "" "s/lll.lll.lll.lll/$6/" config.xml
     sed -i "" "s/rrr.rrr.rrr.rrr/$7/" config.xml
+    sed -i "" "s/zzz/$10/" config.xml
+    sed -i "" "s/ccc/$11/" config.xml
     cp config.xml /usr/local/etc/config.xml
 fi
 
@@ -92,10 +102,10 @@ if [ "$3" = "active_active_primary" ]; then
     echo ifconfig hn0 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig hn1 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan0 down >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport 10800 vxlanremoteport 10800 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport $9 vxlanremoteport $9 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan0 up >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport 10801 vxlanremoteport 10801 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport $8 vxlanremoteport $8 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
@@ -104,10 +114,10 @@ elif [ "$3" = "active_active_secondary" ]; then
     echo ifconfig hn0 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig hn1 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan0 down >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport 10800 vxlanremoteport 10800 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport $9 vxlanremoteport $9 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan0 up >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport 10801 vxlanremoteport 10801 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport $8 vxlanremoteport $8 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
