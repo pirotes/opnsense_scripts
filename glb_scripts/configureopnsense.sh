@@ -1,0 +1,132 @@
+#!/bin/sh
+
+# Script Params
+# $1 = OPNScriptURI
+# $2 = OpnVersion
+# $3 = active_active_primary/active_active_secondary/single
+# $4 = Trusted Nic subnet GW IP
+# $5 = Peer Server IP - Private IP Primary or Secondary Server
+# $6 = vxlan local ip
+# $7 = vxlan remote ip
+
+# Check if Primary or Secondary Server to setup Firewal Sync
+# Note: Firewall Sync should only be setup in the Primary Server
+if [ "$3" = "active_active_primary" ]; then
+    fetch $1config-active-active-primary.xml
+    sed -i "" "s/yyy.yyy.yyy.yyy/$4/" glb-config-active-active-primary.xml
+    sed -i "" "s/xxx.xxx.xxx.xxx/$5/" glb-config-active-active-primary.xml
+    sed -i "" "s/lll.lll.lll.lll/$6/" glb-config-active-active-primary.xml
+    sed -i "" "s/rrr.rrr.rrr.rrr/$7/" glb-config-active-active-primary.xml
+    sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" glb-config-active-active-primary.xml
+    cp glb-config-active-active-primary.xml /usr/local/etc/config.xml
+elif [ "$3" = "active_active_secondary" ]; then
+    fetch $1config-active-active-secondary.xml
+    sed -i "" "s/yyy.yyy.yyy.yyy/$4/" glb-config-active-active-secondary.xml
+    sed -i "" "s/xxx.xxx.xxx.xxx/$5/" glb-config-active-active-secondary.xml
+    sed -i "" "s/lll.lll.lll.lll/$6/" glb-config-active-active-secondary.xml
+    sed -i "" "s/rrr.rrr.rrr.rrr/$7/" glb-config-active-active-secondary.xml
+    sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" glb-config-active-active-secondary.xml
+    cp glb-config-active-active-secondary.xml /usr/local/etc/config.xml
+elif [ "$3" = "single" ]; then
+    fetch $1config.xml
+    sed -i "" "s/yyy.yyy.yyy.yyy/$4/" config.xml
+    sed -i "" "s/lll.lll.lll.lll/$6/" config.xml
+    sed -i "" "s/rrr.rrr.rrr.rrr/$7/" config.xml
+    cp config.xml /usr/local/etc/config.xml
+fi
+
+#OPNSense default configuration template
+#fetch https://raw.githubusercontent.com/dmauser/opnazure/dev_active_active/scripts/$1
+#fetch https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/$1
+#cp $1 /usr/local/etc/config.xml
+
+# 1. Package to get root certificate bundle from the Mozilla Project (FreeBSD)
+# 2. Install bash to support Azure Backup integration
+#env IGNORE_OSVERSION=yes
+#pkg bootstrap -f; pkg update -f
+#env ASSUME_ALWAYS_YES=YES pkg install ca_root_nss && pkg install -y bash
+
+#Download OPNSense Bootstrap and Permit Root Remote Login
+#fetch https://raw.githubusercontent.com/opnsense/update/master/src/bootstrap/opnsense-bootstrap.sh.in
+#fetch https://raw.githubusercontent.com/opnsense/update/7ba940e0d57ece480540c4fd79e9d99a87f222c8/src/bootstrap/opnsense-bootstrap.sh.in
+fetch https://raw.githubusercontent.com/opnsense/update/master/src/bootstrap/opnsense-bootstrap.sh.in
+sed -i "" 's/#PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+#OPNSense
+# Due to a recent change in pkg the following commands no longer finish with status code 0
+#		pkg unlock -a
+#		pkg delete -fa
+# This resplace of set -e which force the script to finish in case of non status code 0 has to be inplace
+sed -i "" "s/set -e/#set -e/g" opnsense-bootstrap.sh.in
+sed -i "" "s/reboot/shutdown -r +1/g" opnsense-bootstrap.sh.in
+sh ./opnsense-bootstrap.sh.in -y -r "$2"
+
+# WAagent
+# https://forum.opnsense.org/index.php?topic=40291.msg197657#msg197657
+pkg install -y azure-agent
+# echo 'waagent_enable="YES"' >> /etc/rc.conf
+
+# Fix waagent by replacing configuration settings
+pyver=$(python3 -V | awk '{print $2}' | cut -d. -f1,2)
+ln -s /usr/local/bin/python${pyver} /usr/local/bin/python
+##sed -i "" 's/command_interpreter="python"/command_interpreter="python3"/' /etc/rc.d/waagent
+##sed -i "" 's/#!\/usr\/bin\/env python/#!\/usr\/bin\/env python3/' /usr/local/sbin/waagent
+# sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
+fetch $1actions_waagent.conf
+cp actions_waagent.conf /usr/local/opnsense/service/conf/actions.d
+
+# Installing bash - This is a requirement for Azure custom Script extension to run
+pkg install -y bash
+pkg install -y os-frr
+
+# Remove wrong route at initialization
+cat > /usr/local/etc/rc.syshook.d/start/22-remoteroute <<EOL
+#!/bin/sh
+route delete 168.63.129.16
+EOL
+chmod +x /usr/local/etc/rc.syshook.d/start/22-remoteroute
+
+
+#VXLAN config
+if [ "$3" = "active_active_primary" ]; then
+    echo ifconfig hn0 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig hn1 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan0 down >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport 10800 vxlanremoteport 10800 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan0 up >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport 10801 vxlanremoteport 10801 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    chmod +x /usr/local/etc/rc.syshook.d/start/25-azure 
+elif [ "$3" = "active_active_secondary" ]; then
+    echo ifconfig hn0 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig hn1 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan0 down >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport 10800 vxlanremoteport 10800 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan0 up >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport 10801 vxlanremoteport 10801 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    chmod +x /usr/local/etc/rc.syshook.d/start/25-azure 
+    chmod +x /usr/local/etc/rc.syshook.d/start/25-azure
+fi
+
+#Adds support to LB probe from IP 168.63.129.16
+#Add Azure VIP on Arp table
+echo # Add Azure Internal VIP >> /etc/rc.conf
+echo static_arp_pairs=\"azvip\" >>  /etc/rc.conf
+echo static_arp_azvip=\"168.63.129.16 12:34:56:78:9a:bc\" >> /etc/rc.conf
+# Makes arp effective
+service static_arp start
+# To survive boots adding to OPNsense Autorun/Bootup:
+echo service static_arp start >> /usr/local/etc/rc.syshook.d/start/20-freebsd
+
+# Reset WebGUI certificate
+echo #\!/bin/sh >> /usr/local/etc/rc.syshook.d/start/94-restartwebgui
+echo configctl webgui restart renew >> /usr/local/etc/rc.syshook.d/start/94-restartwebgui
+echo rm /usr/local/etc/rc.syshook.d/start/94-restartwebgui >> /usr/local/etc/rc.syshook.d/start/94-restartwebgui
+chmod +x /usr/local/etc/rc.syshook.d/start/94-restartwebgui
