@@ -21,8 +21,8 @@ if [ "$3" = "active_active_primary" ]; then
     sed -i "" "s/xxx.xxx.xxx.xxx/$5/" glb-config-active-active-primary.xml
     sed -i "" "s/lll.lll.lll.lll/$6/" glb-config-active-active-primary.xml
     sed -i "" "s/rrr.rrr.rrr.rrr/$7/" glb-config-active-active-primary.xml
-    sed -i "" "s/zzz/$10/" glb-config-active-active-primary.xml
-    sed -i "" "s/ccc/$11/" glb-config-active-active-primary.xml
+    sed -i "" "s/zzz/${10}/" glb-config-active-active-primary.xml
+    sed -i "" "s/ccc/${11}/" glb-config-active-active-primary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" glb-config-active-active-primary.xml
     cp glb-config-active-active-primary.xml /usr/local/etc/config.xml
 elif [ "$3" = "active_active_secondary" ]; then
@@ -31,8 +31,8 @@ elif [ "$3" = "active_active_secondary" ]; then
     sed -i "" "s/xxx.xxx.xxx.xxx/$5/" glb-config-active-active-secondary.xml
     sed -i "" "s/lll.lll.lll.lll/$6/" glb-config-active-active-secondary.xml
     sed -i "" "s/rrr.rrr.rrr.rrr/$7/" glb-config-active-active-secondary.xml
-    sed -i "" "s/zzz/$10/" glb-config-active-active-secondary.xml
-    sed -i "" "s/ccc/$11/" glb-config-active-active-secondary.xml
+    sed -i "" "s/zzz/${10}/" glb-config-active-active-secondary.xml
+    sed -i "" "s/ccc/${11}/" glb-config-active-active-secondary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" glb-config-active-active-secondary.xml
     cp glb-config-active-active-secondary.xml /usr/local/etc/config.xml
 elif [ "$3" = "single" ]; then
@@ -40,8 +40,8 @@ elif [ "$3" = "single" ]; then
     sed -i "" "s/yyy.yyy.yyy.yyy/$4/" config.xml
     sed -i "" "s/lll.lll.lll.lll/$6/" config.xml
     sed -i "" "s/rrr.rrr.rrr.rrr/$7/" config.xml
-    sed -i "" "s/zzz/$10/" config.xml
-    sed -i "" "s/ccc/$11/" config.xml
+    sed -i "" "s/zzz/${10}/" config.xml
+    sed -i "" "s/ccc/${11}/" config.xml
     cp config.xml /usr/local/etc/config.xml
 fi
 
