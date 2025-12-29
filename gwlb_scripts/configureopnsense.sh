@@ -96,7 +96,6 @@ route delete 168.63.129.16
 EOL
 chmod +x /usr/local/etc/rc.syshook.d/start/22-remoteroute
 
-
 #VXLAN config
 if [ "$3" = "active_active_primary" ]; then
     echo ifconfig hn0 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
