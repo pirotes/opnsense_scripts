@@ -16,7 +16,7 @@
 # Check if Primary or Secondary Server to setup Firewal Sync
 # Note: Firewall Sync should only be setup in the Primary Server
 if [ "$3" = "active_active_primary" ]; then
-    fetch $1config-active-active-primary.xml
+    fetch $1glb-config-active-active-primary.xml
     sed -i "" "s/yyy.yyy.yyy.yyy/$4/" glb-config-active-active-primary.xml
     sed -i "" "s/xxx.xxx.xxx.xxx/$5/" glb-config-active-active-primary.xml
     sed -i "" "s/lll.lll.lll.lll/$6/" glb-config-active-active-primary.xml
@@ -26,7 +26,7 @@ if [ "$3" = "active_active_primary" ]; then
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" glb-config-active-active-primary.xml
     cp glb-config-active-active-primary.xml /usr/local/etc/config.xml
 elif [ "$3" = "active_active_secondary" ]; then
-    fetch $1config-active-active-secondary.xml
+    fetch $1glb-config-active-active-secondary.xml
     sed -i "" "s/yyy.yyy.yyy.yyy/$4/" glb-config-active-active-secondary.xml
     sed -i "" "s/xxx.xxx.xxx.xxx/$5/" glb-config-active-active-secondary.xml
     sed -i "" "s/lll.lll.lll.lll/$6/" glb-config-active-active-secondary.xml
