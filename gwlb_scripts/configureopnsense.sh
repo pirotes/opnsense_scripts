@@ -16,25 +16,25 @@
 # Check if Primary or Secondary Server to setup Firewal Sync
 # Note: Firewall Sync should only be setup in the Primary Server
 if [ "$3" = "active_active_primary" ]; then
-    fetch $1glb-config-active-active-primary.xml
-    sed -i "" "s/yyy.yyy.yyy.yyy/$4/" glb-config-active-active-primary.xml
-    sed -i "" "s/xxx.xxx.xxx.xxx/$5/" glb-config-active-active-primary.xml
-    sed -i "" "s/lll.lll.lll.lll/$6/" glb-config-active-active-primary.xml
-    sed -i "" "s/rrr.rrr.rrr.rrr/$7/" glb-config-active-active-primary.xml
-    sed -i "" "s/zzz/${10}/" glb-config-active-active-primary.xml
-    sed -i "" "s/ccc/${11}/" glb-config-active-active-primary.xml
-    sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" glb-config-active-active-primary.xml
-    cp glb-config-active-active-primary.xml /usr/local/etc/config.xml
+    fetch $1gwlb-config-active-active-primary.xml
+    sed -i "" "s/yyy.yyy.yyy.yyy/$4/" gwlb-config-active-active-primary.xml
+    sed -i "" "s/xxx.xxx.xxx.xxx/$5/" gwlb-config-active-active-primary.xml
+    sed -i "" "s/lll.lll.lll.lll/$6/" gwlb-config-active-active-primary.xml
+    sed -i "" "s/rrr.rrr.rrr.rrr/$7/" gwlb-config-active-active-primary.xml
+    sed -i "" "s/zzz/${10}/" gwlb-config-active-active-primary.xml
+    sed -i "" "s/ccc/${11}/" gwlb-config-active-active-primary.xml
+    sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" gwlb-config-active-active-primary.xml
+    cp gwlb-config-active-active-primary.xml /usr/local/etc/config.xml
 elif [ "$3" = "active_active_secondary" ]; then
-    fetch $1glb-config-active-active-secondary.xml
-    sed -i "" "s/yyy.yyy.yyy.yyy/$4/" glb-config-active-active-secondary.xml
-    sed -i "" "s/xxx.xxx.xxx.xxx/$5/" glb-config-active-active-secondary.xml
-    sed -i "" "s/lll.lll.lll.lll/$6/" glb-config-active-active-secondary.xml
-    sed -i "" "s/rrr.rrr.rrr.rrr/$7/" glb-config-active-active-secondary.xml
-    sed -i "" "s/zzz/${10}/" glb-config-active-active-secondary.xml
-    sed -i "" "s/ccc/${11}/" glb-config-active-active-secondary.xml
-    sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" glb-config-active-active-secondary.xml
-    cp glb-config-active-active-secondary.xml /usr/local/etc/config.xml
+    fetch $1gwlb-config-active-active-secondary.xml
+    sed -i "" "s/yyy.yyy.yyy.yyy/$4/" gwlb-config-active-active-secondary.xml
+    sed -i "" "s/xxx.xxx.xxx.xxx/$5/" gwlb-config-active-active-secondary.xml
+    sed -i "" "s/lll.lll.lll.lll/$6/" gwlb-config-active-active-secondary.xml
+    sed -i "" "s/rrr.rrr.rrr.rrr/$7/" gwlb-config-active-active-secondary.xml
+    sed -i "" "s/zzz/${10}/" gwlb-config-active-active-secondary.xml
+    sed -i "" "s/ccc/${11}/" gwlb-config-active-active-secondary.xml
+    sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" gwlb-config-active-active-secondary.xml
+    cp gwlb-config-active-active-secondary.xml /usr/local/etc/config.xml
 elif [ "$3" = "single" ]; then
     fetch $1config.xml
     sed -i "" "s/yyy.yyy.yyy.yyy/$4/" config.xml
