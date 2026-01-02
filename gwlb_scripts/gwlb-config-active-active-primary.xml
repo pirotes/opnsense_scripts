@@ -289,7 +289,6 @@
       <descr>LAN</descr>
       <enable>1</enable>
       <spoofmac/>
-      <mtu>4000</mtu>
       <ipaddr>dhcp</ipaddr>
       <dhcphostname/>
       <alias-address/>
