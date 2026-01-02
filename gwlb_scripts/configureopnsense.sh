@@ -22,7 +22,9 @@ if [ "$3" = "active_active_primary" ]; then
     sed -i "" "s/lll.lll.lll.lll/$6/" gwlb-config-active-active-primary.xml
     sed -i "" "s/rrr.rrr.rrr.rrr/$7/" gwlb-config-active-active-primary.xml
     sed -i "" "s/zzz/${10}/" gwlb-config-active-active-primary.xml
+    sed -i "" "s/eeee/$8/" gwlb-config-active-active-primary.xml
     sed -i "" "s/ccc/${11}/" gwlb-config-active-active-primary.xml
+    sed -i "" "s/dddd/$9/" gwlb-config-active-active-primary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" gwlb-config-active-active-primary.xml
     cp gwlb-config-active-active-primary.xml /usr/local/etc/config.xml
 elif [ "$3" = "active_active_secondary" ]; then
@@ -32,7 +34,9 @@ elif [ "$3" = "active_active_secondary" ]; then
     sed -i "" "s/lll.lll.lll.lll/$6/" gwlb-config-active-active-secondary.xml
     sed -i "" "s/rrr.rrr.rrr.rrr/$7/" gwlb-config-active-active-secondary.xml
     sed -i "" "s/zzz/${10}/" gwlb-config-active-active-secondary.xml
+    sed -i "" "s/eeee/$8/" gwlb-config-active-active-secondary.xml
     sed -i "" "s/ccc/${11}/" gwlb-config-active-active-secondary.xml
+    sed -i "" "s/dddd/$9/" gwlb-config-active-active-secondary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" gwlb-config-active-active-secondary.xml
     cp gwlb-config-active-active-secondary.xml /usr/local/etc/config.xml
 elif [ "$3" = "single" ]; then
