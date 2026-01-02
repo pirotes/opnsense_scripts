@@ -721,7 +721,9 @@
           <deviceId>1</deviceId>
           <vxlanid>ccc</vxlanid>
           <vxlanlocal>lll.lll.lll.lll</vxlanlocal>
+          <vxlanlocalport>dddd</vxlanlocalport>
           <vxlanremote>rrr.rrr.rrr.rrr</vxlanremote>
+          <vxlanremoteport>dddd</vxlanremoteport>
           <vxlangroup/>
           <vxlandev/>
         </vxlan>
@@ -729,7 +731,9 @@
           <deviceId>2</deviceId>
           <vxlanid>zzz</vxlanid>
           <vxlanlocal>lll.lll.lll.lll</vxlanlocal>
+          <vxlanlocalport>eeee</vxlanlocalport>
           <vxlanremote>rrr.rrr.rrr.rrr</vxlanremote>
+          <vxlanremoteport>eeee</vxlanremoteport>
           <vxlangroup/>
           <vxlandev/>
         </vxlan>
