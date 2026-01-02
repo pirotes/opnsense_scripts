@@ -329,19 +329,19 @@
     </lo0>
     <opt1>
       <if>vxlan0</if>
-      <descr>glbext</descr>
+      <descr>gwlb-ext</descr>
       <enable>1</enable>
       <spoofmac/>
     </opt1>
     <opt2>
       <if>vxlan1</if>
-      <descr>glbint</descr>
+      <descr>gwlb-int</descr>
       <enable>1</enable>
       <spoofmac/>
     </opt2>
     <opt3>
       <if>bridge0</if>
-      <descr>glbbr</descr>
+      <descr>gwlb-br</descr>
       <enable>1</enable>
       <spoofmac/>
     </opt3>
@@ -994,7 +994,7 @@
   </staticroutes>
   <bridges>
     <bridged>
-      <descr>glbbr</descr>
+      <descr>gwlb-br</descr>
       <maxaddr/>
       <timeout/>
       <bridgeif>bridge0</bridgeif>
