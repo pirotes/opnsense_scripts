@@ -110,14 +110,16 @@ if [ "$3" = "active_active_primary" ]; then
     # echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
     # echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport $8 vxlanremoteport $8 >> /usr/local/etc/rc.syshook.d/start/25-azure
     # echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
+    # echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    # echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport $9 vxlanremoteport $9 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan2 down >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan2 vxlanlocal $6 vxlanremote $7 vxlanlocalport $8 vxlanremoteport $8 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan2 up >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig bridge0 addm vxlan2 >> /usr/local/etc/rc.syshook.d/start/25-azure
     chmod +x /usr/local/etc/rc.syshook.d/start/25-azure 
 elif [ "$3" = "active_active_secondary" ]; then
     # echo ifconfig hn0 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
@@ -128,14 +130,16 @@ elif [ "$3" = "active_active_secondary" ]; then
     # echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
     # echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport $8 vxlanremoteport $8 >> /usr/local/etc/rc.syshook.d/start/25-azure
     # echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
+    # echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    # echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport $9 vxlanremoteport $9 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan2 down >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan2 vxlanlocal $6 vxlanremote $7 vxlanlocalport $8 vxlanremoteport $8 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan2 up >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig bridge0 addm vxlan2 >> /usr/local/etc/rc.syshook.d/start/25-azure
     chmod +x /usr/local/etc/rc.syshook.d/start/25-azure 
     chmod +x /usr/local/etc/rc.syshook.d/start/25-azure
 fi
