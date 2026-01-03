@@ -266,7 +266,7 @@
   <interfaces>
     <wan>
       <if>hn0</if>
-      <descr/>
+      <descr>WAN</descr>
       <enable>1</enable>
       <spoofmac/>
       <blockbogons>1</blockbogons>
@@ -328,13 +328,13 @@
       <virtual>1</virtual>
     </lo0>
     <opt1>
-      <if>vxlan1</if>
+      <if>vxlan0</if>
       <descr>gwlbExt</descr>
       <enable>1</enable>
       <spoofmac/>
     </opt1>
     <opt2>
-      <if>vxlan2</if>
+      <if>vxlan1</if>
       <descr>gwlbInt</descr>
       <enable>1</enable>
       <spoofmac/>
@@ -698,7 +698,7 @@
     <Interfaces>
       <vxlans version="1.0.1">
         <vxlan uuid="8ff7ff13-123a-4a65-bda9-e8f30f528659">
-          <deviceId>1</deviceId>
+          <deviceId>0</deviceId>
           <vxlanid>ccc</vxlanid>
           <vxlanlocal>lll.lll.lll.lll</vxlanlocal>
           <vxlanlocalport>dddd</vxlanlocalport>
@@ -708,7 +708,7 @@
           <vxlandev/>
         </vxlan>
         <vxlan uuid="e46974de-8d5d-4516-955f-3bf014aea872">
-          <deviceId>2</deviceId>
+          <deviceId>1</deviceId>
           <vxlanid>zzz</vxlanid>
           <vxlanlocal>lll.lll.lll.lll</vxlanlocal>
           <vxlanlocalport>eeee</vxlanlocalport>
