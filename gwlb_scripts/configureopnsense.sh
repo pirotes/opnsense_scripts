@@ -142,7 +142,6 @@ elif [ "$3" = "active_active_secondary" ]; then
     # echo ifconfig vxlan2 up >> /usr/local/etc/rc.syshook.d/start/25-azure
     # echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
     # echo ifconfig bridge0 addm vxlan2 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    chmod +x /usr/local/etc/rc.syshook.d/start/25-azure 
     chmod +x /usr/local/etc/rc.syshook.d/start/25-azure
 fi
 
