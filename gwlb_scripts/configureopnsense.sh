@@ -104,8 +104,8 @@ chmod +x /usr/local/etc/rc.syshook.d/start/22-remoteroute
 
 #VXLAN config
 if [ "$3" = "active_active_primary" ]; then
-    echo ifconfig hn0 mtu 3900 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig hn1 mtu 3900 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig hn0 mtu 3800 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig hn1 mtu 3800 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan0 down >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport $9 vxlanremoteport $9 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan0 up >> /usr/local/etc/rc.syshook.d/start/25-azure
@@ -124,8 +124,8 @@ if [ "$3" = "active_active_primary" ]; then
     # echo ifconfig bridge0 addm vxlan2 >> /usr/local/etc/rc.syshook.d/start/25-azure
     chmod +x /usr/local/etc/rc.syshook.d/start/25-azure 
 elif [ "$3" = "active_active_secondary" ]; then
-    echo ifconfig hn0 mtu 3900 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig hn1 mtu 3900 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig hn0 mtu 3800 >> /usr/local/etc/rc.syshook.d/start/25-azure
+    echo ifconfig hn1 mtu 3800 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan0 down >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport $9 vxlanremoteport $9 >> /usr/local/etc/rc.syshook.d/start/25-azure
     echo ifconfig vxlan0 up >> /usr/local/etc/rc.syshook.d/start/25-azure
