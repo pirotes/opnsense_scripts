@@ -269,7 +269,7 @@
       <descr>WAN</descr>
       <enable>1</enable>
       <spoofmac/>
-      <mtu>3900</mtu>
+      <mtu>3800</mtu>
       <blockbogons>1</blockbogons>
       <ipaddr>dhcp</ipaddr>
       <dhcphostname/>
@@ -296,7 +296,7 @@
       <descr>LAN</descr>
       <enable>1</enable>
       <spoofmac/>
-      <mtu>3900</mtu>
+      <mtu>3800</mtu>
       <ipaddr>dhcp</ipaddr>
       <dhcphostname/>
       <alias-address/>
