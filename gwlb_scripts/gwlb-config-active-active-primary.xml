@@ -324,14 +324,12 @@
     <opt1>
       <if>vxlan0</if>
       <descr>gwlbExt</descr>
-      <mss>1350</mss>
       <enable>1</enable>
       <spoofmac/>
     </opt1>
     <opt2>
       <if>vxlan1</if>
       <descr>gwlbInt</descr>
-      <mss>1350</mss>
       <enable>1</enable>
       <spoofmac/>
     </opt2>
