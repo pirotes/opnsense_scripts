@@ -17,4 +17,4 @@ Opnsense Fireall Scripts with azure vm extension
 - Opnsense VM NIC에는 MTU 4000으로 조정되도록 scripts에 반영함
 - vxlan Interface MTU size는 default인 1450임
 - ***TCP MSS Fragmentation이 발생되면 Packet이 Drop되므로 opnsense에서 vxlan interface(gwlbExt, gwlbInt)에 TCP MSS를 1350으로 구성 필요***
-  - vxlan header(encapsulation)의 오버헤드가 있으므로 Packet 크기가 MTU Size를 벗어 날 수 있으므로 MSS를 낮춰 playload값을 줄임
+  - vxlan header(encapsulation)의 오버헤드가 있으므로 Packet 크기가 MTU Size를 벗어 날 수 있어(TLS등) MSS를 낮춰 playload값을 줄임
