@@ -96,11 +96,11 @@ pkg install -y bash
 pkg install -y os-frr
 
 # Remove wrong route at initialization
-cat > /usr/local/etc/rc.syshook.d/start/22-remoteroute <<EOL
-#!/bin/sh
-route delete 168.63.129.16
-EOL
-chmod +x /usr/local/etc/rc.syshook.d/start/22-remoteroute
+# cat > /usr/local/etc/rc.syshook.d/start/22-remoteroute <<EOL
+# #!/bin/sh
+# route delete 168.63.129.16
+# EOL
+# chmod +x /usr/local/etc/rc.syshook.d/start/22-remoteroute
 
 #VXLAN config
 if [ "$3" = "active_active_primary" ]; then
