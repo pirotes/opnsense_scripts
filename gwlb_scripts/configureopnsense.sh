@@ -76,48 +76,48 @@ pkg install -y bash
 pkg install -y os-frr
 
 # Remove wrong route at initialization
-# cat > /usr/local/etc/rc.syshook.d/start/22-remoteroute <<EOL
-# #!/bin/sh
-# route delete 168.63.129.16
-# EOL
-# chmod +x /usr/local/etc/rc.syshook.d/start/22-remoteroute
+cat > /usr/local/etc/rc.syshook.d/start/22-remoteroute <<EOL
+#!/bin/sh
+route delete 168.63.129.16
+EOL
+chmod +x /usr/local/etc/rc.syshook.d/start/22-remoteroute
 
-#VXLAN config
-if [ "$3" = "active_active_primary" ]; then
-    echo ifconfig hn0 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig hn1 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan0 down >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport $9 vxlanremoteport $9 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan0 up >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport $8 vxlanremoteport $8 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    chmod +x /usr/local/etc/rc.syshook.d/start/25-azure 
-elif [ "$3" = "active_active_secondary" ]; then
-    echo ifconfig hn0 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig hn1 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan0 down >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport $9 vxlanremoteport $9 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan0 up >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport $8 vxlanremoteport $8 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
-    chmod +x /usr/local/etc/rc.syshook.d/start/25-azure
-fi
+# #VXLAN config
+# if [ "$3" = "active_active_primary" ]; then
+#     echo ifconfig hn0 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig hn1 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan0 down >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport $9 vxlanremoteport $9 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan0 up >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport $8 vxlanremoteport $8 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     chmod +x /usr/local/etc/rc.syshook.d/start/25-azure 
+# elif [ "$3" = "active_active_secondary" ]; then
+#     echo ifconfig hn0 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig hn1 mtu 4000 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan0 down >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan0 vxlanlocal $6 vxlanremote $7 vxlanlocalport $9 vxlanremoteport $9 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan0 up >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan1 down >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan1 vxlanlocal $6 vxlanremote $7 vxlanlocalport $8 vxlanremoteport $8 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig vxlan1 up >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig bridge0 addm vxlan0 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     echo ifconfig bridge0 addm vxlan1 >> /usr/local/etc/rc.syshook.d/start/25-azure
+#     chmod +x /usr/local/etc/rc.syshook.d/start/25-azure
+# fi
 
-# #Adds support to LB probe from IP 168.63.129.16
-# #Add Azure VIP on Arp table
-# echo # Add Azure Internal VIP >> /etc/rc.conf
-# echo static_arp_pairs=\"azvip\" >>  /etc/rc.conf
-# echo static_arp_azvip=\"168.63.129.16 12:34:56:78:9a:bc\" >> /etc/rc.conf
-# # Makes arp effective
-# service static_arp start
-# # To survive boots adding to OPNsense Autorun/Bootup:
-# echo service static_arp start >> /usr/local/etc/rc.syshook.d/start/20-freebsd
+#Adds support to LB probe from IP 168.63.129.16
+#Add Azure VIP on Arp table
+echo # Add Azure Internal VIP >> /etc/rc.conf
+echo static_arp_pairs=\"azvip\" >>  /etc/rc.conf
+echo static_arp_azvip=\"168.63.129.16 12:34:56:78:9a:bc\" >> /etc/rc.conf
+# Makes arp effective
+service static_arp start
+# To survive boots adding to OPNsense Autorun/Bootup:
+echo service static_arp start >> /usr/local/etc/rc.syshook.d/start/20-freebsd
 
 # Reset WebGUI certificate
 echo #\!/bin/sh >> /usr/local/etc/rc.syshook.d/start/94-restartwebgui
