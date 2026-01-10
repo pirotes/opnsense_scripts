@@ -262,6 +262,7 @@
       <if>hn0</if>
       <descr>WAN</descr>
       <enable>1</enable>
+      <mtu>4000</mtu>
       <spoofmac/>
       <blockbogons>1</blockbogons>
       <ipaddr>dhcp</ipaddr>
@@ -288,6 +289,7 @@
       <if>hn1</if>
       <descr>LAN</descr>
       <enable>1</enable>
+      <mtu>4000</mtu>
       <spoofmac/>
       <ipaddr>dhcp</ipaddr>
       <dhcphostname/>
@@ -325,12 +327,14 @@
       <if>vxlan0</if>
       <descr>gwlbExt</descr>
       <enable>1</enable>
+      <mss>1350</mss>
       <spoofmac/>
     </opt1>
     <opt2>
       <if>vxlan1</if>
       <descr>gwlbInt</descr>
       <enable>1</enable>
+      <mss>1350</mss>
       <spoofmac/>
     </opt2>
     <opt3>
