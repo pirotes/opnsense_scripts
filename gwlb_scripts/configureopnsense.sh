@@ -41,14 +41,14 @@ elif [ "$3" = "active_active_secondary" ]; then
     cp gwlb-config-active-active-secondary.xml /usr/local/etc/config.xml
 elif [ "$3" = "single" ]; then
     fetch $1config.xml
-    sed -i "" "s/yyy.yyy.yyy.yyy/$4/" config.xml
-    sed -i "" "s/lll.lll.lll.lll/$6/" config.xml
-    sed -i "" "s/rrr.rrr.rrr.rrr/$7/" config.xml
-    sed -i "" "s/zzz/${10}/" config.xml
-    sed -i "" "s/eeee/$8/" config.xml
-    sed -i "" "s/ccc/${11}/" config.xml
-    sed -i "" "s/dddd/$9/" config.xml
-    cp config.xml /usr/local/etc/config.xml
+    sed -i "" "s/yyy.yyy.yyy.yyy/$4/" gwlb-config.xml
+    sed -i "" "s/lll.lll.lll.lll/$6/" gwlb-config.xml
+    sed -i "" "s/rrr.rrr.rrr.rrr/$7/" gwlb-config.xml
+    sed -i "" "s/zzz/${10}/" gwlb-config.xml
+    sed -i "" "s/eeee/$8/" gwlb-config.xml
+    sed -i "" "s/ccc/${11}/" gwlb-config.xml
+    sed -i "" "s/dddd/$9/" gwlb-config.xml
+    cp gwlb-config.xml /usr/local/etc/config.xml
 fi
 
 #Download OPNSense Bootstrap and Permit Root Remote Login
