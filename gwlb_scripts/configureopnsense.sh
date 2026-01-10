@@ -40,7 +40,7 @@ elif [ "$3" = "active_active_secondary" ]; then
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" gwlb-config-active-active-secondary.xml
     cp gwlb-config-active-active-secondary.xml /usr/local/etc/config.xml
 elif [ "$3" = "single" ]; then
-    fetch $1config.xml
+    fetch $1gwlb-config.xml
     sed -i "" "s/yyy.yyy.yyy.yyy/$4/" gwlb-config.xml
     sed -i "" "s/lll.lll.lll.lll/$6/" gwlb-config.xml
     sed -i "" "s/rrr.rrr.rrr.rrr/$7/" gwlb-config.xml
