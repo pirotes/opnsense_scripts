@@ -14,7 +14,7 @@ Opnsense Firewall Scripts with azure vm extension
   - 이에 VM SKU의 network accelerated networking를 확인하여 network accelerated networking를 disable할 수 있는지 확인 해야 함
     - 특정 SKU는 network accelerated networking가 Required임(v6 SKU등)
     - [Azure VM SKU List](https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview?tabs=breakdownseries%2Cgeneralsizelist%2Ccomputesizelist%2Cmemorysizelist%2Cstoragesizelist%2Cgpusizelist%2Cfpgasizelist%2Chpcsizelist)
-- 초기 opnsense 포털 접속 후 진행해야 할 것
+- 초기 opnsense 포털 접속 후 진행해야 할 것 (모든 opnsense vm에 적용 필요)
   - Opnsense VM NIC에는 MTU 4000으로 조정필요
   - vxlan Interface MTU size는 default인 1450임
   - ***Azure에서 MTU사이즈보다 큰 packet을 수신하면 해당 Packet이 drop되므로 MSS Size를 줄여서 drop되지 않게 해야함***
