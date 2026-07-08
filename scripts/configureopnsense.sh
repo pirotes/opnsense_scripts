@@ -91,11 +91,36 @@ pkg install -y azure-agent
 # Create /usr/local/bin/python symlink pointing at the installed python3 binary.
 # Detected dynamically so it remains correct if the python3 minor version changes.
 log "Configuring python symlink for waagent..."
-PYTHON3_BIN=$(ls /usr/local/bin/python3.* 2>/dev/null | grep -v '\.py$' | sort -V | tail -1)
+PYTHON3_BIN=$(ls /usr/local/bin/python3.* 2>/dev/null | grep -vE '(\.py$|-config)' | sort -V | tail -1)
 if [ -n "$PYTHON3_BIN" ] && [ ! -e /usr/local/bin/python ]; then
     ln -s "$PYTHON3_BIN" /usr/local/bin/python
     log "Symlink created: /usr/local/bin/python -> ${PYTHON3_BIN}"
 fi
+
+# ── Neutralize legacy CustomScriptForLinux handler shim (방법 1) ──────────────
+# The 1.5.4 handler code is Python-2 era and breaks on modern Python
+# (imp / crypt / distutils were all removed in Python 3.12~3.13) at
+# disable/uninstall time, which makes Terraform extension deletion hang with
+# "polling after Delete: context deadline exceeded". Since this script has
+# already been executed by the time we reach this point, replace shim.sh with
+# a no-op so any later -disable/-uninstall simply exits 0 and deletion succeeds.
+#
+# NOTE:
+#   - Replace via mv (new inode), NOT in-place overwrite: this script is a
+#     child of the currently running shim.sh, and truncating the file the
+#     parent shell is still reading could corrupt it.
+#   - After this, re-running/updating the SAME extension on this VM becomes a
+#     no-op. That is fine for one-shot provisioning; a fresh VM deploy always
+#     installs a fresh handler (which runs before this neutralization).
+log "Neutralizing CustomScriptForLinux shim.sh for clean future deletion..."
+for HANDLER_DIR in /var/lib/waagent/Microsoft.OSTCExtensions.CustomScriptForLinux-*; do
+    [ -d "$HANDLER_DIR" ] || continue
+    printf '#!/bin/sh\nexit 0\n' > "${HANDLER_DIR}/shim.sh.new"
+    chmod 755 "${HANDLER_DIR}/shim.sh.new"
+    cp -p "${HANDLER_DIR}/shim.sh" "${HANDLER_DIR}/shim.sh.bak.$(date +%Y%m%d%H%M%S)"
+    mv "${HANDLER_DIR}/shim.sh.new" "${HANDLER_DIR}/shim.sh"
+    log "Neutralized: ${HANDLER_DIR}/shim.sh"
+done
 
 sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
 
