@@ -118,10 +118,49 @@ pkg install -y azure-agent
 # Create /usr/local/bin/python symlink pointing at the installed python3 binary.
 # Detected dynamically so it remains correct if the python3 minor version changes.
 log "Configuring python symlink for waagent..."
-PYTHON3_BIN=$(ls /usr/local/bin/python3.* 2>/dev/null | grep -v '\.py$' | sort -V | tail -1)
+PYTHON3_BIN=$(ls /usr/local/bin/python3.* 2>/dev/null | grep -vE '(\.py$|-config)' | sort -V | tail -1)
 if [ -n "$PYTHON3_BIN" ] && [ ! -e /usr/local/bin/python ]; then
     ln -s "$PYTHON3_BIN" /usr/local/bin/python
     log "Symlink created: /usr/local/bin/python -> ${PYTHON3_BIN}"
+fi
+
+# 'imp' compatibility shim for legacy waagent extensions
+# The legacy CustomScriptForLinux 1.5.4 handler imports the 'imp' module,
+# which was removed in Python 3.12+. Without this shim, extension
+# disable/uninstall fails and Terraform deletion hangs with
+# "polling after Delete: context deadline exceeded".
+log "Installing 'imp' compatibility shim for legacy waagent extensions..."
+if [ -n "$PYTHON3_BIN" ]; then
+    SITE_PKGS=$("$PYTHON3_BIN" -c 'import site; print(site.getsitepackages()[0])' 2>/dev/null)
+    if [ -n "$SITE_PKGS" ] && [ -d "$SITE_PKGS" ]; then
+        if "$PYTHON3_BIN" -c 'import imp' 2>/dev/null; then
+            log "'imp' module already importable, shim not needed."
+        else
+            cat > "${SITE_PKGS}/imp.py" <<'EOF'
+"""Minimal shim for the 'imp' module removed in Python 3.12.
+ 
+Provides load_source(), which is what legacy Azure VM extension
+handlers (e.g. Microsoft.OSTCExtensions.CustomScriptForLinux 1.5.x
+Utils/WAAgentUtil.py) actually use.
+"""
+import importlib.machinery
+import importlib.util
+import sys
+ 
+ 
+def load_source(name, path):
+    loader = importlib.machinery.SourceFileLoader(name, path)
+    spec = importlib.util.spec_from_file_location(name, path, loader=loader)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    loader.exec_module(module)
+    return module
+EOF
+            log "Installed 'imp' shim at ${SITE_PKGS}/imp.py"
+        fi
+    else
+        log "WARNING: Could not locate site-packages; 'imp' shim not installed."
+    fi
 fi
 
 sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
