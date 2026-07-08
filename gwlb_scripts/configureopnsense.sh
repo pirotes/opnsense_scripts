@@ -123,15 +123,18 @@ if [ -n "$PYTHON3_BIN" ] && [ ! -e /usr/local/bin/python ]; then
     log "Symlink created: /usr/local/bin/python -> ${PYTHON3_BIN}"
 fi
 
-# 'imp' compatibility shim for legacy waagent extensions
-# The legacy CustomScriptForLinux 1.5.4 handler imports the 'imp' module,
-# which was removed in Python 3.12+. Without this shim, extension
-# disable/uninstall fails and Terraform deletion hangs with
-# "polling after Delete: context deadline exceeded".
-log "Installing 'imp' compatibility shim for legacy waagent extensions..."
+# ── Compatibility shims for legacy waagent extensions
+# The legacy CustomScriptForLinux 1.5.4 handler code needs stdlib modules that
+# were removed from modern Python:
+#   - 'imp'   : removed in Python 3.12 (used by Utils/WAAgentUtil.py)
+#   - 'crypt' : removed in Python 3.13 (imported by the bundled waagent script)
+# Without these shims, extension disable/uninstall fails and Terraform
+# deletion hangs with "polling after Delete: context deadline exceeded".
+log "Installing compatibility shims for legacy waagent extensions..."
 if [ -n "$PYTHON3_BIN" ]; then
     SITE_PKGS=$("$PYTHON3_BIN" -c 'import site; print(site.getsitepackages()[0])' 2>/dev/null)
     if [ -n "$SITE_PKGS" ] && [ -d "$SITE_PKGS" ]; then
+        # -- imp shim
         if "$PYTHON3_BIN" -c 'import imp' 2>/dev/null; then
             log "'imp' module already importable, shim not needed."
         else
@@ -157,8 +160,49 @@ def load_source(name, path):
 EOF
             log "Installed 'imp' shim at ${SITE_PKGS}/imp.py"
         fi
+        # -- crypt shim
+        if "$PYTHON3_BIN" -c 'import crypt' 2>/dev/null; then
+            log "'crypt' module already importable, shim not needed."
+        else
+            cat > "${SITE_PKGS}/crypt.py" <<'EOF'
+"""Minimal shim for the 'crypt' module removed in Python 3.13.
+ 
+Delegates to the system crypt(3) via ctypes. Enough for legacy
+waagent / Azure VM extension code paths.
+"""
+import ctypes
+import ctypes.util
+ 
+_lib = None
+for _name in (ctypes.util.find_library("crypt"), ctypes.util.find_library("c")):
+    if not _name:
+        continue
+    try:
+        _cand = ctypes.CDLL(_name)
+        _cand.crypt.restype = ctypes.c_char_p
+        _cand.crypt.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
+        _lib = _cand
+        break
+    except (OSError, AttributeError):
+        continue
+ 
+ 
+def crypt(word, salt):
+    if _lib is None:
+        raise NotImplementedError("crypt(3) not available on this system")
+    if isinstance(word, str):
+        word = word.encode()
+    if isinstance(salt, str):
+        salt = salt.encode()
+    result = _lib.crypt(word, salt)
+    if result is None:
+        raise OSError("crypt() failed")
+    return result.decode()
+EOF
+            log "Installed 'crypt' shim at ${SITE_PKGS}/crypt.py"
+        fi
     else
-        log "WARNING: Could not locate site-packages; 'imp' shim not installed."
+        log "WARNING: Could not locate site-packages; compatibility shims not installed."
     fi
 fi
 
