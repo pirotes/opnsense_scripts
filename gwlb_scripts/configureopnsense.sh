@@ -77,7 +77,6 @@ elif [ "$ROLE" = "active_active_secondary" ]; then
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" gwlb-config-active-active-secondary.xml
     cp gwlb-config-active-active-secondary.xml /usr/local/etc/config.xml
 
-    
 elif [ "$ROLE" = "single" ]; then
     fetch -q "${OPN_SCRIPT_URI}gwlb-config.xml"
     GWIP=$(fetch_gw_ip)
