@@ -123,88 +123,30 @@ if [ -n "$PYTHON3_BIN" ] && [ ! -e /usr/local/bin/python ]; then
     log "Symlink created: /usr/local/bin/python -> ${PYTHON3_BIN}"
 fi
 
-# ── Compatibility shims for legacy waagent extensions
-# The legacy CustomScriptForLinux 1.5.4 handler code needs stdlib modules that
-# were removed from modern Python:
-#   - 'imp'   : removed in Python 3.12 (used by Utils/WAAgentUtil.py)
-#   - 'crypt' : removed in Python 3.13 (imported by the bundled waagent script)
-# Without these shims, extension disable/uninstall fails and Terraform
-# deletion hangs with "polling after Delete: context deadline exceeded".
-log "Installing compatibility shims for legacy waagent extensions..."
-if [ -n "$PYTHON3_BIN" ]; then
-    SITE_PKGS=$("$PYTHON3_BIN" -c 'import site; print(site.getsitepackages()[0])' 2>/dev/null)
-    if [ -n "$SITE_PKGS" ] && [ -d "$SITE_PKGS" ]; then
-        # -- imp shim
-        if "$PYTHON3_BIN" -c 'import imp' 2>/dev/null; then
-            log "'imp' module already importable, shim not needed."
-        else
-            cat > "${SITE_PKGS}/imp.py" <<'EOF'
-"""Minimal shim for the 'imp' module removed in Python 3.12.
- 
-Provides load_source(), which is what legacy Azure VM extension
-handlers (e.g. Microsoft.OSTCExtensions.CustomScriptForLinux 1.5.x
-Utils/WAAgentUtil.py) actually use.
-"""
-import importlib.machinery
-import importlib.util
-import sys
- 
- 
-def load_source(name, path):
-    loader = importlib.machinery.SourceFileLoader(name, path)
-    spec = importlib.util.spec_from_file_location(name, path, loader=loader)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[name] = module
-    loader.exec_module(module)
-    return module
-EOF
-            log "Installed 'imp' shim at ${SITE_PKGS}/imp.py"
-        fi
-        # -- crypt shim
-        if "$PYTHON3_BIN" -c 'import crypt' 2>/dev/null; then
-            log "'crypt' module already importable, shim not needed."
-        else
-            cat > "${SITE_PKGS}/crypt.py" <<'EOF'
-"""Minimal shim for the 'crypt' module removed in Python 3.13.
- 
-Delegates to the system crypt(3) via ctypes. Enough for legacy
-waagent / Azure VM extension code paths.
-"""
-import ctypes
-import ctypes.util
- 
-_lib = None
-for _name in (ctypes.util.find_library("crypt"), ctypes.util.find_library("c")):
-    if not _name:
-        continue
-    try:
-        _cand = ctypes.CDLL(_name)
-        _cand.crypt.restype = ctypes.c_char_p
-        _cand.crypt.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
-        _lib = _cand
-        break
-    except (OSError, AttributeError):
-        continue
- 
- 
-def crypt(word, salt):
-    if _lib is None:
-        raise NotImplementedError("crypt(3) not available on this system")
-    if isinstance(word, str):
-        word = word.encode()
-    if isinstance(salt, str):
-        salt = salt.encode()
-    result = _lib.crypt(word, salt)
-    if result is None:
-        raise OSError("crypt() failed")
-    return result.decode()
-EOF
-            log "Installed 'crypt' shim at ${SITE_PKGS}/crypt.py"
-        fi
-    else
-        log "WARNING: Could not locate site-packages; compatibility shims not installed."
-    fi
-fi
+# ── Neutralize legacy CustomScriptForLinux handler shim (방법 1) ──────────────
+# The 1.5.4 handler code is Python-2 era and breaks on modern Python
+# (imp / crypt / distutils were all removed in Python 3.12~3.13) at
+# disable/uninstall time, which makes Terraform extension deletion hang with
+# "polling after Delete: context deadline exceeded". Since this script has
+# already been executed by the time we reach this point, replace shim.sh with
+# a no-op so any later -disable/-uninstall simply exits 0 and deletion succeeds.
+#
+# NOTE:
+#   - Replace via mv (new inode), NOT in-place overwrite: this script is a
+#     child of the currently running shim.sh, and truncating the file the
+#     parent shell is still reading could corrupt it.
+#   - After this, re-running/updating the SAME extension on this VM becomes a
+#     no-op. That is fine for one-shot provisioning; a fresh VM deploy always
+#     installs a fresh handler (which runs before this neutralization).
+log "Neutralizing CustomScriptForLinux shim.sh for clean future deletion..."
+for HANDLER_DIR in /var/lib/waagent/Microsoft.OSTCExtensions.CustomScriptForLinux-*; do
+    [ -d "$HANDLER_DIR" ] || continue
+    printf '#!/bin/sh\nexit 0\n' > "${HANDLER_DIR}/shim.sh.new"
+    chmod 755 "${HANDLER_DIR}/shim.sh.new"
+    cp -p "${HANDLER_DIR}/shim.sh" "${HANDLER_DIR}/shim.sh.bak.$(date +%Y%m%d%H%M%S)"
+    mv "${HANDLER_DIR}/shim.sh.new" "${HANDLER_DIR}/shim.sh"
+    log "Neutralized: ${HANDLER_DIR}/shim.sh"
+done
 
 sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
 
