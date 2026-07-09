@@ -97,7 +97,7 @@ if [ -n "$PYTHON3_BIN" ] && [ ! -e /usr/local/bin/python ]; then
     log "Symlink created: /usr/local/bin/python -> ${PYTHON3_BIN}"
 fi
 
-# ── Neutralize legacy CustomScriptForLinux handler shim (방법 1) ──────────────
+## Neutralize legacy CustomScriptForLinux handler shim
 # The 1.5.4 handler code is Python-2 era and breaks on modern Python
 # (imp / crypt / distutils were all removed in Python 3.12~3.13) at
 # disable/uninstall time, which makes Terraform extension deletion hang with
@@ -121,6 +121,7 @@ for HANDLER_DIR in /var/lib/waagent/Microsoft.OSTCExtensions.CustomScriptForLinu
     mv "${HANDLER_DIR}/shim.sh.new" "${HANDLER_DIR}/shim.sh"
     log "Neutralized: ${HANDLER_DIR}/shim.sh"
 done
+##
 
 sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
 
